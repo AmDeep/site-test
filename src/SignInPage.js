@@ -5,16 +5,28 @@ function SignInPage({ onSignIn }) {
   const [isPermissionsVisible, setPermissionsVisible] = useState(false);
   const [accountType, setAccountType] = useState('');
   const [isPermissionAccepted, setIsPermissionAccepted] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   // Handle button click for Gmail or Outlook
   const handleSignIn = (method) => {
     setAccountType(method);
     setLoading(true);
-    
+
     setTimeout(() => {
       setLoading(false);
       setPermissionsVisible(true);
     }, 2000); // 2-second loading animation
+
+    if (method === 'Outlook') {
+      // Simulate progress for Outlook
+      let progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev < 100) return prev + 20;
+          clearInterval(progressInterval);
+          return 100;
+        });
+      }, 1000);
+    }
   };
 
   // Handle when the user accepts the permissions
@@ -36,11 +48,28 @@ function SignInPage({ onSignIn }) {
 
       {loading && accountType === 'Outlook' && (
         <div style={styles.outlookLoadingContainer}>
-          <div style={styles.loadingText}>Signing you in to Outlook...</div>
+          <div style={styles.loadingText}>
+            Signing you in to Outlook...
+          </div>
+          <div style={styles.microsoftLogoContainer}>
+            <img
+              src="https://mailmeteor.com/logos/assets/PNG/Microsoft_Office_Outlook_Logo_512px.png"
+              alt="Microsoft Logo"
+              style={styles.microsoftLogo}
+            />
+          </div>
           <div style={styles.loadingDots}>
             <span style={styles.dot}></span>
             <span style={styles.dot}></span>
             <span style={styles.dot}></span>
+          </div>
+          <div style={styles.progressBarContainer}>
+            <div
+              style={{
+                ...styles.progressBar,
+                width: `${progress}%`,
+              }}
+            />
           </div>
         </div>
       )}
@@ -76,8 +105,12 @@ function SignInPage({ onSignIn }) {
       {/* Permissions modal for Gmail/Outlook */}
       {isPermissionsVisible && (
         <div style={styles.permissionsModal}>
-          <h3>{accountType} Permissions</h3>
-          <p>By continuing, you allow us to access your account information.</p>
+          <h3>Permissions Request</h3>
+          <p>
+            {accountType === 'Outlook'
+              ? 'Outlook is requesting the following permissions to allow this app to access your account information.'
+              : 'Gmail is requesting the following permissions to allow this app to access your account information.'}
+          </p>
           <div style={styles.permissionsDetails}>
             <ul>
               <li>Email address</li>
@@ -149,6 +182,15 @@ const styles = {
     color: '#fff',
     textAlign: 'center',
   },
+  microsoftLogoContainer: {
+    marginTop: '20px',
+    textAlign: 'center',
+  },
+  microsoftLogo: {
+    width: '50px',
+    height: '50px',
+    marginBottom: '20px',
+  },
   loadingDots: {
     marginTop: '10px',
     display: 'flex',
@@ -162,6 +204,17 @@ const styles = {
     borderRadius: '50%',
     margin: '0 5px',
     animation: 'dot-animation 1s infinite alternate',
+  },
+  progressBarContainer: {
+    marginTop: '20px',
+    height: '8px',
+    backgroundColor: '#ddd',
+    borderRadius: '2px',
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#1D6BB8', // Blue color for the progress bar
   },
   permissionsModal: {
     marginTop: '20px',
