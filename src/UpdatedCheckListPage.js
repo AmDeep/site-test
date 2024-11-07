@@ -89,8 +89,9 @@ function UpdatedCheckListPage({ onNext }) {
       <div style={styles.emailSentContainer}>
         <p>Email has been sent successfully!</p>
       </div>
-
-      <button style={styles.nextButton} onClick={onNext}>Proceed to Next Step</button>
+      <div style={styles.emailSentContainer}>
+        <p>No more pending tasks, will let you know when we get more issues</p>
+      </div>
     </div>
   );
 }
