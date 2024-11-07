@@ -4,12 +4,59 @@ function FileSelectionPage({ onNext }) {
   const [isProcessing, setIsProcessing] = useState(true);
   const [currentMessage, setCurrentMessage] = useState("Pulling data from emails...");
   const [files, setFiles] = useState([]);
-  
+  const [isProgrammerScreenVisible, setIsProgrammerScreenVisible] = useState(false);
+  const [isFilesVisible, setIsFilesVisible] = useState(false);
+  const [typedCode, setTypedCode] = useState('');
+  const [terminalOutput, setTerminalOutput] = useState('');
+
+const codeSnippets = `# Linux Operations:
+echo "Pulling data from emails..."
+sleep 2
+echo "Emails fetched: email1@example.com, email2@example.com"
+echo "Pulling files..."
+sleep 2
+echo "Files fetched: payroll_data.csv, employee_records.xlsx"
+
+# Python Operations:
+import os
+import time
+
+def fetch_data():
+    print("Fetching data from directory...")
+    files = os.listdir("/data/files/")
+    print("Files found:", files)
+    return files
+
+files = fetch_data()
+
+# System Check:
+df -h
+ls -l /data/files/
+`;
+
+  const outputText = `# Terminal Output:
+> Pulling data from emails...
+> Emails fetched: email1@example.com, email2@example.com
+>
+> Pulling files...
+> Files fetched: payroll_data.csv, employee_records.xlsx
+>
+> Fetching data from directory...
+> Files found: ['payroll_data.csv', 'employee_records.xlsx']
+>
+> Disk Usage:
+> Filesystem      Size  Used Avail Use% Mounted on
+> /dev/sda1       100G   30G  70G  30% /data
+> 
+> Listing Files:
+> -rwxr-xr-x 1 user user 1.5M Nov 1 10:00 payroll_data.csv
+> -rwxr-xr-x 1 user user  900K Oct 28 12:30 employee_records.xlsx
+`;
+
   useEffect(() => {
     setTimeout(() => {
       setCurrentMessage("Pulling files...");
       setTimeout(() => {
-        // Simulate file data
         setFiles([
           {
             name: 'Payroll File (dummy.csv)',
@@ -25,9 +72,42 @@ function FileSelectionPage({ onNext }) {
           }
         ]);
         setIsProcessing(false);
-      }, 2000); // Simulate time for pulling files
-    }, 2000); // Simulate time for pulling data from emails
+        setIsProgrammerScreenVisible(true);
+
+        setTimeout(() => {
+          setIsProgrammerScreenVisible(false);
+          setIsFilesVisible(true);
+        }, 10000);
+      }, 2000); 
+    }, 2000);
   }, []);
+
+  useEffect(() => {
+    if (isProgrammerScreenVisible) {
+      let codeIndex = 0;
+      let outputIndex = 0;
+
+      const codeInterval = setInterval(() => {
+        if (codeIndex < codeSnippets.length) {
+          setTypedCode((prev) => prev + codeSnippets[codeIndex]);
+          codeIndex++;
+        } else {
+          clearInterval(codeInterval);
+        }
+      }, 50);
+
+      setTimeout(() => {
+        const outputInterval = setInterval(() => {
+          if (outputIndex < outputText.length) {
+            setTerminalOutput((prev) => prev + outputText[outputIndex]);
+            outputIndex++;
+          } else {
+            clearInterval(outputInterval);
+          }
+        }, 50);
+      }, codeSnippets.length * 50);
+    }
+  }, [isProgrammerScreenVisible]);
 
   const handleNext = () => {
     onNext();
@@ -36,31 +116,52 @@ function FileSelectionPage({ onNext }) {
   return (
     <div style={styles.container}>
       <h2>File Selection</h2>
-      
-      {/* Processing Animation */}
-      {isProcessing ? (
+
+      {isProcessing && (
         <div style={styles.processingContainer}>
           <div style={styles.processingText}>{currentMessage}</div>
         </div>
-      ) : (
+      )}
+
+      {/* Programmer screen showing typed code */}
+      {isProgrammerScreenVisible && (
+        <div style={styles.programmingScreen}>
+          <div style={styles.codeScreen}>
+            <pre style={styles.codeBlock}>
+              {typedCode}
+            </pre>
+            <div style={styles.executionResultContainer}>
+              <div style={styles.executionText}>Executing...</div>
+              <div style={styles.executionResult}>
+                <pre>
+                  {terminalOutput}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Files table after the programmer screen */}
+      {isFilesVisible && (
         <div style={styles.filesContainer}>
           <h3>Files Processed:</h3>
           <table style={styles.table}>
             <thead>
               <tr>
-                <th>File Name</th>
-                <th>Size</th>
-                <th>Uploaded On</th>
-                <th>Details</th>
+                <th style={styles.tableHeader}>File Name</th>
+                <th style={styles.tableHeader}>Size</th>
+                <th style={styles.tableHeader}>Uploaded On</th>
+                <th style={styles.tableHeader}>Details</th>
               </tr>
             </thead>
             <tbody>
               {files.map((file, index) => (
                 <tr key={index}>
-                  <td>{file.name}</td>
-                  <td>{file.size}</td>
-                  <td>{file.uploaded}</td>
-                  <td>{file.details}</td>
+                  <td style={styles.tableCell}>{file.name}</td>
+                  <td style={styles.tableCell}>{file.size}</td>
+                  <td style={styles.tableCell}>{file.uploaded}</td>
+                  <td style={styles.tableCell}>{file.details}</td>
                 </tr>
               ))}
             </tbody>
@@ -98,6 +199,7 @@ const styles = {
     backgroundColor: '#f4f7fc',
     borderRadius: '8px',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    marginTop: '20px',
   },
   table: {
     width: '100%',
@@ -121,6 +223,40 @@ const styles = {
     borderRadius: '5px',
     cursor: 'pointer',
     marginTop: '20px',
+  },
+  programmingScreen: {
+    marginTop: '40px',
+    textAlign: 'left',
+    backgroundColor: '#000',
+    padding: '20px',
+    borderRadius: '8px',
+    color: '#00FF00',
+    fontFamily: 'monospace',
+    overflowY: 'auto',
+    height: '300px',
+    width: '100%',
+  },
+  codeScreen: {
+    marginBottom: '20px',
+  },
+  codeBlock: {
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+    fontSize: '16px',
+    lineHeight: '1.5',
+  },
+  executionResultContainer: {
+    marginTop: '20px',
+    backgroundColor: '#222',
+    padding: '10px',
+    borderRadius: '8px',
+  },
+  executionResult: {
+    color: '#FFFFFF',
+    fontSize: '14px',
+  },
+  executionText: {
+    color: '#66FF66',
   },
 };
 
