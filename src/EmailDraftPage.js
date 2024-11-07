@@ -15,9 +15,9 @@ Phil Hong
   `);
   const [isDraftDeleted, setIsDraftDeleted] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
-  const [recipientEmail, setRecipientEmail] = useState(''); // New state for recipient email
-  const [selectedTone, setSelectedTone] = useState(''); // New state for tone selection
-  const [isHovered, setIsHovered] = useState(false); // For hover effect on FIS link
+  const [recipientEmail, setRecipientEmail] = useState('jane.doe@example.com'); // Hardcoded for demonstration
+  const [selectedTone, setSelectedTone] = useState('Friendly and Casual'); // Default tone
+  const [showEvidence, setShowEvidence] = useState(false);  // Evidence popup toggle
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -41,7 +41,16 @@ Phil Hong
 
   const handleToneSelection = (tone) => {
     setSelectedTone(tone); // Update the tone of the email
-    setEmailContent((prevContent) => `${tone}\n\n${prevContent}`);
+    const emailExamples = {
+      'Friendly and Casual': `Hi Jane,\n\nI hope you had a great trip with your family to Orlando last week! How was Disneyworld?\n\nWe are trying to finalize your onboarding and noticed that there are a few members (John Ellsworth, Jack Stevens, and Lucy Smith) that are ineligible according to your plan docs.\n\nLet us know how you'd like to proceed within the next 5 business days. Thanks!\nPhil Hong`,
+      'Professional': `Dear Jane,\n\nI hope this message finds you well. We are finalizing your onboarding, and I noticed that a few of the members (John Ellsworth, Jack Stevens, and Lucy Smith) appear to be ineligible based on your plan documents.\n\nKindly provide guidance on how to proceed within the next 5 business days.\n\nBest regards,\nPhil Hong`,
+      'Urgent': `Dear Jane,\n\nI need your immediate attention regarding the eligibility of some members (John Ellsworth, Jack Stevens, and Lucy Smith) in your onboarding process.\n\nPlease respond within 48 hours, or we will be unable to proceed with their enrollment.\n\nThanks,\nPhil Hong`
+    };
+    setEmailContent(emailExamples[tone]);
+  };
+
+  const handleToggleEvidence = () => {
+    setShowEvidence(!showEvidence); // Toggle visibility of the context evidence
   };
 
   return (
@@ -55,6 +64,9 @@ Phil Hong
           <button style={styles.returnButton} onClick={handleReturnToChecklist}>
             Return to Checklist
           </button>
+          <button style={styles.nextButton} onClick={() => alert("No more pending tasks, will let you know when we get more issues.")}>
+            Next
+          </button>
         </div>
       ) : (
         <div style={styles.emailDraftContainer}>
@@ -65,6 +77,23 @@ Phil Hong
               <li>Incomplete payroll records</li>
               <li>Rehire/Hire date inconsistencies</li>
             </ul>
+
+            {/* Evidence link for context */}
+            <button style={styles.evidenceButton} onClick={handleToggleEvidence}>
+              {showEvidence ? 'Hide Evidence' : 'View Evidence'}
+            </button>
+            {showEvidence && (
+              <div style={styles.evidencePopup}>
+                <h4>Context Evidence</h4>
+                <p><strong>Recipient Email:</strong> {recipientEmail}</p>
+                <p><strong>Selected Tone:</strong> {selectedTone}</p>
+                <ul>
+                  <li><strong>Email Example 1:</strong> Sent to `jane.doe@example.com` with a "Friendly and Casual" tone.</li>
+                  <li><strong>Email Example 2:</strong> Sent to `mark.smith@example.com` with a "Professional" tone.</li>
+                  <li><strong>Email Example 3:</strong> Sent to `lisa.johnson@example.com` with an "Urgent" tone.</li>
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Recipient Email */}
@@ -103,80 +132,6 @@ Phil Hong
                 Urgent
               </div>
             </div>
-          </div>
-
-          {/* Display Email Examples next to Tone Options */}
-          <div style={styles.emailExamples}>
-            {selectedTone === 'Friendly and Casual' && (
-              <div style={styles.emailExample}>
-                <h5>Friendly and Casual</h5>
-                <p><strong>Subject:</strong> Quick Question about Your Enrollment</p>
-                <p>Hey Jane, just wanted to check in regarding your eligibility status...</p>
-              </div>
-            )}
-            {selectedTone === 'Professional' && (
-              <div style={styles.emailExample}>
-                <h5>Professional</h5>
-                <p><strong>Subject:</strong> Eligibility Status Confirmation</p>
-                <p>Dear Ms. Jane, I hope this message finds you well. I wanted to bring to your attention...</p>
-              </div>
-            )}
-            {selectedTone === 'Urgent' && (
-              <div style={styles.emailExample}>
-                <h5>Urgent</h5>
-                <p><strong>Subject:</strong> Immediate Action Required: Eligibility Mismatch</p>
-                <p>Dear Jane, this is a time-sensitive matter that requires your prompt attention regarding...</p>
-              </div>
-            )}
-          </div>
-
-          {/* FIS File with Hover Popup */}
-          <div
-            style={styles.fisFileContainer}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <a href="#" style={styles.fisFileLink}>
-              FIS File: Ineligible Data
-            </a>
-            {isHovered && (
-              <div style={styles.popup}>
-                <table style={styles.popupTable}>
-                  <thead>
-                    <tr>
-                      <th style={styles.popupTableTh}>Employee Name</th>
-                      <th style={styles.popupTableTh}>Issue</th>
-                      <th style={styles.popupTableTh}>Employee ID</th>
-                      <th style={styles.popupTableTh}>Status</th>
-                      <th style={styles.popupTableTh}>Date Identified</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td style={styles.popupTableTd}>John Ellsworth</td>
-                      <td style={styles.popupTableTd}>Eligibility Mismatch</td>
-                      <td style={styles.popupTableTd}>12345</td>
-                      <td style={styles.popupTableTd}>Pending</td>
-                      <td style={styles.popupTableTd}>2024-10-05</td>
-                    </tr>
-                    <tr>
-                      <td style={styles.popupTableTd}>Jack Stevens</td>
-                      <td style={styles.popupTableTd}>Eligibility Mismatch</td>
-                      <td style={styles.popupTableTd}>67890</td>
-                      <td style={styles.popupTableTd}>Pending</td>
-                      <td style={styles.popupTableTd}>2024-10-07</td>
-                    </tr>
-                    <tr>
-                      <td style={styles.popupTableTd}>Lucy Smith</td>
-                      <td style={styles.popupTableTd}>Eligibility Mismatch</td>
-                      <td style={styles.popupTableTd}>11223</td>
-                      <td style={styles.popupTableTd}>Verified</td>
-                      <td style={styles.popupTableTd}>2024-10-06</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            )}
           </div>
 
           <textarea
@@ -294,6 +249,15 @@ const styles = {
     cursor: 'pointer',
     marginTop: '20px',
   },
+  nextButton: {
+    backgroundColor: '#FF6347',
+    color: 'white',
+    padding: '6px 12px',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginTop: '20px',
+  },
   inputContainer: {
     textAlign: 'left',
     width: '100%',
@@ -322,47 +286,21 @@ const styles = {
     borderRadius: '5px',
     transition: 'background-color 0.2s ease',
   },
-  emailExamples: {
-    textAlign: 'left',
+  evidenceButton: {
+    backgroundColor: '#007BFF',
+    color: 'white',
+    padding: '6px 12px',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
     marginTop: '20px',
   },
-  emailExample: {
+  evidencePopup: {
+    backgroundColor: '#f4f7fc',
     padding: '10px',
-    backgroundColor: '#f9f9f9',
-    marginBottom: '10px',
     borderRadius: '5px',
-  },
-  fisFileContainer: {
-    marginBottom: '20px',
-    position: 'relative',
-  },
-  fisFileLink: {
-    color: '#007BFF',
-    textDecoration: 'underline',
-    cursor: 'pointer',
-  },
-  popup: {
-    position: 'absolute',
-    top: '10px',
-    left: '0',
-    backgroundColor: '#fff',
+    marginTop: '20px',
     border: '1px solid #ccc',
-    padding: '10px',
-    borderRadius: '5px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    zIndex: '100',
-  },
-  popupTable: {
-    width: '100%',
-    borderCollapse: 'collapse',
-  },
-  popupTableTh: {
-    textAlign: 'left',
-    padding: '5px',
-    fontWeight: 'bold',
-  },
-  popupTableTd: {
-    padding: '5px',
   },
 };
 
