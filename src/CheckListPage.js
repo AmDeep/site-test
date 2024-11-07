@@ -74,7 +74,10 @@ function CheckListPage({ emailSent, onNext }) {
               <td>{entry.name}</td>
               <td>{entry.description}</td>
               <td>
-                <button style={styles.reviewButton} onClick={() => handleReview(index)}>
+                <button
+                  style={expanded === index ? { ...styles.reviewButton, backgroundColor: 'grey' } : styles.reviewButton}
+                  onClick={() => handleReview(index)}
+                >
                   {expanded === index ? 'Hide' : 'Review'}
                 </button>
                 {expanded === index && (
@@ -86,6 +89,11 @@ function CheckListPage({ emailSent, onNext }) {
                         </li>
                       ))}
                     </ul>
+                    {entry.name === 'Getting Eligible Employee Data' && (
+                      <p style={styles.errorText}>
+                        Eligibility issue: mismatch — found for 3 entries (John Doe, Jane Smith, Alex Johnson)
+                      </p>
+                    )}
                   </div>
                 )}
               </td>
@@ -140,6 +148,11 @@ const styles = {
   checkItem: {
     marginBottom: '5px',
     fontSize: '14px',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: '14px',
+    marginTop: '10px',
   },
   nextButton: {
     backgroundColor: '#4CAF50',
