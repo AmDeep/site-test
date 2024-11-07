@@ -78,15 +78,11 @@ Phil Hong
               <li>Rehire/Hire date inconsistencies</li>
             </ul>
 
-            {/* Evidence link for context */}
-            <button style={styles.evidenceButton} onClick={handleToggleEvidence}>
-              {showEvidence ? 'Hide Evidence' : 'View Evidence'}
-            </button>
+
             {showEvidence && (
               <div style={styles.evidencePopup}>
                 <h4>Context Evidence</h4>
                 <p><strong>Recipient Email:</strong> {recipientEmail}</p>
-                <p><strong>Selected Tone:</strong> {selectedTone}</p>
                 <ul>
                   <li><strong>Email Example 1:</strong> Sent to `jane.doe@example.com` with a "Friendly and Casual" tone.</li>
                   <li><strong>Email Example 2:</strong> Sent to `mark.smith@example.com` with a "Professional" tone.</li>
@@ -111,7 +107,6 @@ Phil Hong
 
           {/* Tone of Email Selection */}
           <div style={styles.toneContainer}>
-            <h4>Select Tone of Email:</h4>
             <div style={styles.toneList}>
               <div
                 style={styles.toneItem}
