@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SignInPage from './SignInPage';
 import FISLoginPage from './FISLoginPage';
 import FileSelectionPage from './FileSelectionPage';
+import OperationStepPage from './OperationStepPage'; // Import the new OperationStepPage component
 import CheckListPage from './CheckListPage';
 import EmailDraftPage from './EmailDraftPage';
 import UpdatedCheckListPage from './UpdatedCheckListPage';
@@ -17,7 +18,7 @@ function App() {
     setTimeout(() => {
       setLoading(false);
       setStep(step + 1);
-      setProgress((prevProgress) => prevProgress + 25); // Increment progress bar
+      setProgress((prevProgress) => prevProgress + 20); // Increment progress bar
     }, 500); // 0.5 seconds loading animation
   };
 
@@ -30,7 +31,15 @@ function App() {
   };
 
   const handleFileSelection = () => {
-    goToNextStep();
+    goToNextStep();  // Move to the next step after file selection
+  };
+
+  const handleOperationStepComplete = () => {
+    goToNextStep();  // Move to CheckListPage after operation steps are complete
+  };
+
+  const handleCheckList = () => {
+    goToNextStep();  // Move to the next step after checklist page
   };
 
   const handleEmailDraft = () => {
@@ -38,7 +47,7 @@ function App() {
   };
 
   const handleSendEmail = () => {
-    setStep(step + 1); // Go to the updated checklist page
+    goToNextStep();  // Go to the updated checklist page after email is sent
   };
 
   return (
@@ -56,9 +65,10 @@ function App() {
       {!loading && step === 1 && <SignInPage onSignIn={handleSignIn} />}
       {!loading && step === 2 && <FISLoginPage onFISLogin={handleFISLogin} />}
       {!loading && step === 3 && <FileSelectionPage onNext={handleFileSelection} />}
-      {!loading && step === 4 && <CheckListPage onNext={goToNextStep} />}
-      {!loading && step === 5 && <EmailDraftPage onSend={handleSendEmail} />}
-      {!loading && step === 6 && <UpdatedCheckListPage />}
+      {!loading && step === 4 && <OperationStepPage onComplete={handleOperationStepComplete} />} {/* New Operation Step Page */}
+      {!loading && step === 5 && <CheckListPage onNext={handleCheckList} />}
+      {!loading && step === 6 && <EmailDraftPage onSend={handleSendEmail} />}
+      {!loading && step === 7 && <UpdatedCheckListPage />}
     </div>
   );
 }
