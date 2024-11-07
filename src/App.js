@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SignInPage from './SignInPage';
+import FISLoginPage from './FISLoginPage';
 import FileSelectionPage from './FileSelectionPage';
 import CheckListPage from './CheckListPage';
 import EmailDraftPage from './EmailDraftPage';
@@ -10,6 +11,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
+  // Helper function to transition between steps
   const goToNextStep = () => {
     setLoading(true);
     setTimeout(() => {
@@ -20,6 +22,10 @@ function App() {
   };
 
   const handleSignIn = () => {
+    goToNextStep();
+  };
+
+  const handleFISLogin = () => {
     goToNextStep();
   };
 
@@ -45,11 +51,14 @@ function App() {
           </div>
         </div>
       )}
+
+      {/* Conditional rendering of pages based on step */}
       {!loading && step === 1 && <SignInPage onSignIn={handleSignIn} />}
-      {!loading && step === 2 && <FileSelectionPage onNext={handleFileSelection} />}
-      {!loading && step === 3 && <CheckListPage onNext={goToNextStep} />}
-      {!loading && step === 4 && <EmailDraftPage onSend={handleSendEmail} />}
-      {!loading && step === 5 && <UpdatedCheckListPage />}
+      {!loading && step === 2 && <FISLoginPage onFISLogin={handleFISLogin} />}
+      {!loading && step === 3 && <FileSelectionPage onNext={handleFileSelection} />}
+      {!loading && step === 4 && <CheckListPage onNext={goToNextStep} />}
+      {!loading && step === 5 && <EmailDraftPage onSend={handleSendEmail} />}
+      {!loading && step === 6 && <UpdatedCheckListPage />}
     </div>
   );
 }
