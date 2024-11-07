@@ -36,8 +36,8 @@ function CheckListPage({ emailSent, onNext }) {
       status: '❌',
       description: 'Data retrieval incomplete due to missing data.',
       checks: [
-        { check: 'Employee eligibility was confirmed', status: '✔️' },
-        { check: 'Eligibility conflicts were resolved', status: '❌' },
+        { check: 'Employee eligibility received', status: '✔️' },
+        { check: 'All employees enrolled in DC are eligible', status: '❌' },
       ],
     },
     {
